@@ -1,3 +1,3 @@
 @echo off
 call .venv\Scripts\activate
-streamlit run app.py weather.py
+streamlit run app.py
