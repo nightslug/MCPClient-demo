@@ -5,6 +5,7 @@
 import asyncio
 import os
 import json
+import sys
 from typing import Optional
 from contextlib import AsyncExitStack
 from openai import AsyncOpenAI
@@ -30,7 +31,7 @@ class MCPClient:
         if not (is_python or is_js):
             raise ValueError("服务器脚本必须是 .py 或 .js 文件")
 
-        command = "python" if is_python else "node"
+        command = sys.executable if is_python else "node"
         server_params = StdioServerParameters(command=command, args=[server_script_path])
         
         stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
