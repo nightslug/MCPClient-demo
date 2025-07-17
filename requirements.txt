@@ -1,4 +1,0 @@
-streamlit
-openai
-python-dotenv
-mcp-client-python
