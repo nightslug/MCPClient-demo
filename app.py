@@ -58,7 +58,7 @@ def main():
     if 'mcp_client' not in st.session_state:
         with st.spinner("正在连接到 MCP 服务器..."):
             try:
-                server_script_path = os.path.join( "weather.py")
+                server_script_path = os.path.join( "tools","weather.py")
                 
                 if not os.path.exists(server_script_path):
                     st.error(f"服务器脚本未找到: {server_script_path}")
