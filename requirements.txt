@@ -2,3 +2,5 @@ streamlit
 openai
 python-dotenv
 mcp
+tushare
+akshare

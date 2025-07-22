@@ -2,14 +2,13 @@ from typing import Any
 import httpx
 from mcp.server.fastmcp import FastMCP
 
-#初始化 FastMCP Server
-mcp = FastMCP("weather",log_lever = "ERROR")
+mcp = FastMCP("weather",log_level = "ERROR")
 
 #常量
 NWS_API_BASE = "https://api.weather.gov"
 USER_AGENT = "weather-app/1.0"
 
-#数据请求函数
+#数据请求
 async def make_nws_request(url: str) -> dict[str, Any] | None:
     """Make a request to the NWS API with proper error handling."""
     headers = {
@@ -40,7 +39,6 @@ Instructions: {props.get('instruction', 'No specific instructions provided')}
 @mcp.tool()
 async def get_alerts(state : str) -> str:
     """Get weather alerts for a US state.
-
     Args:
         state: Two-letter US state code (e.g. CA, NY)
     """
@@ -65,24 +63,22 @@ async def get_forecast(latitude: float, longitude: float) -> str:
         latitude: Latitude of the location
         longitude: Longitude of the location
     """
-    # First get the forecast grid endpoint
+
     points_url = f"{NWS_API_BASE}/points/{latitude},{longitude}"
     points_data = await make_nws_request(points_url)
 
     if not points_data:
         return "Unable to fetch forecast data for this location."
 
-    # Get the forecast URL from the points response
     forecast_url = points_data["properties"]["forecast"]
     forecast_data = await make_nws_request(forecast_url)
 
     if not forecast_data:
         return "Unable to fetch detailed forecast."
 
-    # Format the periods into a readable forecast
     periods = forecast_data["properties"]["periods"]
     forecasts = []
-    for period in periods[:5]:  # Only show next 5 periods
+    for period in periods[:5]: 
         forecast = f"""
 {period['name']}:
 Temperature: {period['temperature']}°{period['temperatureUnit']}
@@ -94,5 +90,4 @@ Forecast: {period['detailedForecast']}
     return "\n---\n".join(forecasts)
 
 if __name__ == "__main__":
-    # Initialize and run the server
     mcp.run(transport='stdio')
