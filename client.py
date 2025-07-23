@@ -6,6 +6,7 @@ import asyncio
 import os
 import json
 import sys
+from datetime import datetime
 from typing import Optional
 from contextlib import AsyncExitStack
 from openai import AsyncOpenAI
@@ -44,6 +45,13 @@ class MCPClient:
 
     async def process_query(self, query: list) -> str:
         messages = query
+        # Add current time to environment details
+        current_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S (%Z, UTC%z)")
+        messages.append({
+            "role": "system",
+            "content": f"Current Time: {current_time}"
+        })
+        
         list_tools_response = await self.session.list_tools()
         available_tools = [{
             "type": "function",

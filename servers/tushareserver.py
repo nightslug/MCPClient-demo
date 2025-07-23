@@ -92,7 +92,7 @@ def fund_manager_by_name(name:str,ann_date:Optional[str] = None) ->str:
 def find_holders(ts_code:str,start_date:Optional[str]='20250101',end_date:Optional[str]='20252722') ->str:
     """查询上市公司前十大股东信息
     Args:
-        name: 公司名称,如‘国金证券’、‘贵州茅台’等
+        ts_code: Tushare股票代码。单个代码如 '600519.SH'，多个代码请用逗号隔开，如 '600519.SH,000001.SZ'
         start_date: 开始日期，格式为 YYYYMMDD,例如 '20240101'
         end_date: 结束日期,格式为YYYYMMDD,例如'20250808'
     """
