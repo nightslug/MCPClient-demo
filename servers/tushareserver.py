@@ -12,7 +12,7 @@ from typing import Optional
 from mcp.server.fastmcp import FastMCP
 
 
-ts.set_token("0b4b2f62b1b2cebda2e28b8b35fecf9ffcc5fd9fa9e9ae595e3ca27a")
+ts.set_token("xxxxxxxxxxxx")
 pro = ts.pro_api()
 mcp = FastMCP("tushare",log_level="ERROR")
 
