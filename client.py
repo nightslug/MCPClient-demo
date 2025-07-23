@@ -1,6 +1,6 @@
 #@author Azrael shi
 #@description: revised version of origianl client wilth fully Asynchronous execution
-#@createdate 2025/7/16
+#@create_date 2025/7/16
 
 import asyncio
 import os
@@ -42,9 +42,8 @@ class MCPClient:
         response = await self.session.list_tools()
         print("\n已连接到服务器,支持以下工具:", [tool.name for tool in response.tools])
 
-    async def process_query(self, query: str) -> str:
-        messages = [{"role": "user", "content": query}]
-        
+    async def process_query(self, query: list) -> str:
+        messages = query
         list_tools_response = await self.session.list_tools()
         available_tools = [{
             "type": "function",

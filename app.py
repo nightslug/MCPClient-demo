@@ -1,11 +1,10 @@
 #@author Azrael shi
 #@description: a simple web ui for MCP Client, implemented with streamlit
-#@createdate 2025/7/16
+#@create_date 2025/7/16
 
 import streamlit as st
 import asyncio
 import os
-import sys
 import threading
 
 from dotenv import load_dotenv
@@ -29,7 +28,7 @@ class AsyncHelper:
         return future.result()
 
 def main():
-    st.title("MCPClient(Azrael's demo)")
+    st.title("MCP Agent")
 
     if 'async_helper' not in st.session_state:
         st.session_state.async_helper = AsyncHelper()
@@ -51,6 +50,7 @@ def main():
                 client_to_clean = st.session_state.pop('mcp_client')
                 async_helper.run_coro(client_to_clean.cleanup())
             st.rerun()
+        st.sidebar.page_link("pages/page2.py", label="工具列表", icon="🛠️")
 
     if not st.session_state.api_key:
         st.info("请输入您的 DeepSeek API Key 开始使用。")
@@ -69,7 +69,6 @@ def main():
                 async_helper.run_coro(client.connect_to_server(server_script_path))
                 st.session_state.mcp_client = client
                 st.success("已成功连接到 MCP 服务器并准备就绪！")
-                
             except Exception as e:
                 st.error(f"客户端初始化失败: {e}")
                 st.stop()
@@ -78,23 +77,31 @@ def main():
     
     # 聊天界面
     if "messages" not in st.session_state:
-        st.session_state.messages = []
+         st.session_state.messages = [{"role": "assistant", "content": "欢迎使用MCP Agent, 我可以帮助您调用各种 MCP 工具来完成任务。请在下方输入您的问题开始对话..."}]
 
     for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+        if msg["role"] != "tool":
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
 
     if prompt := st.chat_input("请输入您的问题..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        st.rerun()
 
+    if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
         with st.chat_message("assistant"):
             with st.spinner("思考中..."):
                 try:
-                    response = async_helper.run_coro(client.process_query(prompt))
-                    st.markdown(response)
-                    st.session_state.messages.append({"role": "assistant", "content": response})
+                    messages_for_api = [
+                        msg for msg in st.session_state.messages if msg.get("role") in ["user", "assistant", "tool"]
+                    ]
+                    if len(messages_for_api) > 0 and messages_for_api[0]["content"].startswith("欢迎使用"):
+                         messages_for_api.pop(0)
+
+                    response_content = async_helper.run_coro(client.process_query(messages_for_api))                    
+                    st.session_state.messages.append({"role": "assistant", "content": response_content})
+                    st.markdown(response_content)
+
                 except Exception as e:
                     error_message = f"处理请求时发生错误: {e}"
                     st.error(error_message)

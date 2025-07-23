@@ -1,3 +1,7 @@
+#@author Azrael shi
+#@description: revised version of origianl client wilth fully Asynchronous execution
+#@create_date 2025/7/21
+
 import tushare as ts
 import datetime
 import json
